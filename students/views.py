@@ -50,3 +50,28 @@ def add(request):
         return render(request, 'add.html', {
             'form': form
         })
+        
+from django.shortcuts import render, get_object_or_404
+
+def edit(request, id):
+    Student = get_object_or_404(student, pk=id)  # Use get_object_or_404 for better error handling
+    if request.method == 'POST':
+        form = studentform(request.POST, instance=Student)
+        if form.is_valid():
+            form.save()
+            return render(request, 'edit.html', {
+                'form': form,
+                'success': True
+            })
+    else:
+        form = studentform(instance=Student)
+    
+    return render(request, 'edit.html', {
+        'form': form
+    })
+
+def delete(request, id):
+    if request.method == 'POST':
+        Student = get_object_or_404(student, pk=id)
+        Student.delete()
+    return HttpResponseRedirect(reverse('index'))
